@@ -102,7 +102,7 @@ function retail_core_omini_sync_products(){
 }
 
 function retail_core_omini_about_page(){
-    esc_html_e( 'Admin About Page', 'textdomain' );
+    esc_html_e( 'Admin About Pagesssssss', 'textdomain' );
 }
 
 if (is_admin()) {

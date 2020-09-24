@@ -11,7 +11,11 @@ if(!class_exists('OminiCurlRequest')) {
         }
 
         public static function init(){
-
+//            $products = CurlRequest::getProducts();
+//            $products = json_decode($products,true);
+//            echo "<pre>";
+//            print_r($products);
+//            exit;
         }
 
         private static function uploadMedia($image_url){
