@@ -13,9 +13,21 @@ if(!class_exists('OminiCurlRequest')) {
         public static function init(){
 //            $products = CurlRequest::getProducts();
 //            $products = json_decode($products,true);
-//            echo "<pre>";
-//            print_r($products);
-//            exit;
+//            $productFeatures = $products['Products'][0]['product_features'];
+//            unset($productFeatures['dynamic_category']);
+//            unset($productFeatures['dynamic_subcategory']);
+//            foreach($productFeatures as $key => $attribute){
+//                $attr_array = [
+//                    'name' => $key,
+//                    'value' => $attribute,
+//                    'is_visible' => 1,
+//                    'is_taxonomy' => 1
+//                ];
+//                update_post_meta( $productID, '_product_attributes', $att_color);
+//                echo "<pre>";
+//                print_r($attribute);
+//                exit;
+//            }
         }
 
         private static function uploadMedia($image_url){
@@ -43,8 +55,40 @@ if(!class_exists('OminiCurlRequest')) {
                 foreach($productImages as $k => $image){
                     $galleryImages[] = self::uploadMedia(self::$ProductImageBasePath.$image['product_image']);
                 }
+                $categoriesArray = [];
+                $parentTerm = wp_insert_term(
+                    $product['product_features']['dynamic_category'],
+                    'product_cat',
+                    array(
+                        'description'=> $product['product_features']['dynamic_category'],
+                        'slug' => strtolower(str_replace(' ','_',$product['product_features']['dynamic_category'])),
+                        'parent'=> 0
+                    )
+                );
+                if(!is_array($parentTerm)){
+                    $existingTerm = $parentTerm->error_data['term_exists'];
+                    $parentTerm = [];
+                    $parentTerm['term_id'] = $existingTerm;
+                }
+                $categoriesArray[] = $parentTerm['term_id'];
+                $childTerm = wp_insert_term(
+                    $product['product_features']['dynamic_subcategory'],
+                    'product_cat',
+                    array(
+                        'description'=> $product['product_features']['dynamic_subcategory'],
+                        'slug' => strtolower(str_replace(' ','_',$product['product_features']['dynamic_subcategory'])),
+                        'parent'=> $parentTerm['term_id']
+                    )
+                );
+                if(!is_array($childTerm)){
+                    $existingTerm = $childTerm->error_data['term_exists'];
+                    $categoriesArray[] = $existingTerm;
+                }else{
+                    $categoriesArray[] = $childTerm['term_id'];
+                }
                 $objProduct = new WC_Product();
                 $objProduct->set_image_id($galleryImages[0]);
+                unset($galleryImages[0]);
                 $objProduct->set_name($product['product_name']);
                 $objProduct->set_status("publish");
                 $objProduct->set_catalog_visibility('visible');
@@ -59,9 +103,23 @@ if(!class_exists('OminiCurlRequest')) {
                 $objProduct->set_backorders('no');
                 $objProduct->set_reviews_allowed(true);
                 $objProduct->set_sold_individually(false);
-                $objProduct->set_category_ids(array(1,2,3));
+                $objProduct->set_category_ids($categoriesArray);
                 $objProduct->set_gallery_image_ids($galleryImages);
-                $objProduct->save();
+                $productID = $objProduct->save();
+                $productFeatures = $product['product_features'];
+                unset($productFeatures['dynamic_category']);
+                unset($productFeatures['dynamic_subcategory']);
+                $attr_array = array();
+                foreach($productFeatures as $key => $attribute){
+                    $attr_array[$key] = array(
+                                                'name' => $key,
+                                                'value' => $attribute,
+                                                'position' => 0,
+                                                'is_visible' => 1,
+                                                'is_taxonomy' => 0
+                                        );
+                }
+                update_post_meta( $productID, '_product_attributes', $attr_array);
                 $count++;
             }
             return $count;

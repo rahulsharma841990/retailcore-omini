@@ -68,8 +68,8 @@ function retail_core_omini_enqueue_style(){
 function retailcore_register_sidebar_menu_option() {
     global $submenu;
     add_menu_page(
-        'Retailcore - OMINI',
-        'Retailcore-OMINI',
+        'Retailcore - OMNI',
+        'Retailcore-OMNI',
         'manage_options',
         'retailcore_omini',
         'retail_core_license_page',
@@ -102,7 +102,7 @@ function retail_core_omini_sync_products(){
 }
 
 function retail_core_omini_about_page(){
-    esc_html_e( 'Admin About Pagesssssss', 'textdomain' );
+    esc_html_e( 'Admin About Pages', 'textdomain' );
 }
 
 if (is_admin()) {
