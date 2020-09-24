@@ -13,3 +13,12 @@
 .mt-5{
     margin-top: 10%;
 }
+
+.custom-spin{
+    margin-right: -31px;
+    margin-top: 12px;
+}
+
+.wait-text{
+    display: none;
+}

@@ -47,13 +47,20 @@ function retailcore_load_custom_wp_admin_style(){
     wp_register_style( 'retailcore_custom_wp_admin_css', plugins_url(RETAILCORE__PLUGIN_DIR_NAME.'/css/retail-core-style.css'), false, '1.0.1' );
     wp_enqueue_style( 'retailcore_custom_wp_admin_css' );
 
-    wp_register_style( 'retailcore_bootstrap_wp_admin_css', plugins_url(RETAILCORE__PLUGIN_DIR_NAME.'/css/bootstrap.css'), false, '1.0.1' );
-    wp_enqueue_style( 'retailcore_bootstrap_wp_admin_css' );
-
     wp_register_style( 'retailcore_bootstrap_theme_wp_admin_css', plugins_url(RETAILCORE__PLUGIN_DIR_NAME.'/css/bootstrap-theme.css'), false, '1.0.1' );
     wp_enqueue_style( 'retailcore_bootstrap_theme_wp_admin_css' );
+
+    wp_register_script('retailcore_omini_custom_script', plugins_url(RETAILCORE__PLUGIN_DIR_NAME.'/js/retail-core-omini-script.js'),false, true);
+    wp_enqueue_script('retailcore_omini_custom_script');
+
 }
 add_action('admin_enqueue_scripts', 'retailcore_load_custom_wp_admin_style');
+
+
+function retail_core_omini_enqueue_style(){
+    wp_register_style( 'retailcore_bootstrap_wp_admin_css', plugins_url(RETAILCORE__PLUGIN_DIR_NAME.'/css/bootstrap.css'), false, '1.0.1' );
+    wp_enqueue_style( 'retailcore_bootstrap_wp_admin_css' );
+}
 
 /**
  * Register a custom menu page.
@@ -75,6 +82,9 @@ function retailcore_register_sidebar_menu_option() {
 
     add_submenu_page('retailcore_omini','Retailcore - About','About',
         'manage_options','about_retail_core_omini','retail_core_omini_about_page');
+
+    add_submenu_page('retailcore_omini','Retailcore - About','Sync',
+        'manage_options','sync_retail_core_plugins','retail_core_omini_sync_products');
 }
 
 
@@ -82,11 +92,31 @@ function retailcore_register_sidebar_menu_option() {
  * Display a custom menu page
  */
 function retail_core_license_page(){
+    retail_core_omini_enqueue_style();
     require_once RETAILCORE__PLUGIN_DIR.'/views/activation.php';
+}
+
+function retail_core_omini_sync_products(){
+    retail_core_omini_enqueue_style();
+    require_once RETAILCORE__PLUGIN_DIR.'/views/sync-products.php';
 }
 
 function retail_core_omini_about_page(){
     esc_html_e( 'Admin About Page', 'textdomain' );
 }
 
+if (is_admin()) {
+
+    require_once( RETAILCORE__PLUGIN_DIR . 'classes/CurlRequest.php' );
+    require_once( RETAILCORE__PLUGIN_DIR . 'classes/OminiCurlRequest.php' );
+    add_action( 'init', array( 'OminiCurlRequest', 'init' ));
+}
+
+add_action( 'wp_ajax_retail_core_sync_products', 'retail_core_sync_products' );
+
+function retail_core_sync_products(){
+    $insertedCount = OminiCurlRequest::syncProduct();
+    echo json_encode(['inserted_count'=>$insertedCount]);
+    exit;
+}
 
