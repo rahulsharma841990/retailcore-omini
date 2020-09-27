@@ -87,6 +87,12 @@ function retailcore_register_sidebar_menu_option() {
         'manage_options','sync_retail_core_plugins','retail_core_omini_sync_products');
 }
 
+add_action('woocommerce_thankyou', 'retailcore_place_order', 10, 1);
+
+function retailcore_place_order($order_id){
+    require_once( RETAILCORE__PLUGIN_DIR . 'classes/OminiCurlRequest.php' );
+    OminiCurlRequest::placeOrder($order_id);
+}
 
 /**
  * Display a custom menu page

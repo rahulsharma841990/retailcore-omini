@@ -11,23 +11,8 @@ if(!class_exists('OminiCurlRequest')) {
         }
 
         public static function init(){
-//            $products = CurlRequest::getProducts();
-//            $products = json_decode($products,true);
-//            $productFeatures = $products['Products'][0]['product_features'];
-//            unset($productFeatures['dynamic_category']);
-//            unset($productFeatures['dynamic_subcategory']);
-//            foreach($productFeatures as $key => $attribute){
-//                $attr_array = [
-//                    'name' => $key,
-//                    'value' => $attribute,
-//                    'is_visible' => 1,
-//                    'is_taxonomy' => 1
-//                ];
-//                update_post_meta( $productID, '_product_attributes', $att_color);
-//                echo "<pre>";
-//                print_r($attribute);
-//                exit;
-//            }
+
+
         }
 
         private static function uploadMedia($image_url){
@@ -120,9 +105,69 @@ if(!class_exists('OminiCurlRequest')) {
                                         );
                 }
                 update_post_meta( $productID, '_product_attributes', $attr_array);
+                update_post_meta($productID,'_product_barcode',$product['product_system_barcode']);
                 $count++;
             }
             return $count;
+        }
+
+        public static function placeOrder($order_id){
+//            $order_id = 2124;
+            $orderDetails = wc_get_order($order_id);
+            $userDetails = $orderDetails->get_customer_id();
+            $userDetails = get_userdata($userDetails);
+            $orderAmount = $orderDetails->get_total();
+            $paymentMethod = $orderDetails->get_payment_method();
+            $orderPaymentMethodId = 0;
+            if($paymentMethod == 'cod'){
+                $orderPaymentMethodId = 10;
+            }
+            $productItems = [];
+            $totalQty = 0;
+            foreach($orderDetails->get_items() as $k => $item) {
+                $product = $item->get_data();
+                $productMeta = get_post_meta($product['product_id'], '_product_barcode');
+                $totalQty += $product['quantity'];
+                $productItems[] = [
+                    'Barcode' => $productMeta[0],
+                    'MRP' => 0,
+                    'Selling Price' => $product['total'],
+                    'Order Qty' => $product['quantity'],
+                    'Discount Percent' => '',
+                    'Discount Amount' => '',
+                    'GST_percent' => 0,
+                    'Total Price' => $product['total'],
+                ];
+            }
+
+            $orderArray = [
+                'Order Details' => [
+                    'Company ID' => 1,
+                    'Order ID/PO NO' => $order_id,
+                    'Date' => date('d'),
+                    'Month' => date('m'),
+                    'Year' => date('Y'),
+                    'Customer Name' => $orderDetails->get_billing_first_name(),
+                    'CONTACT NO' => $orderDetails->get_billing_phone(),
+                    'EMAIL ID' => $orderDetails->get_billing_email(),
+                    'City' => $orderDetails->get_billing_city(),
+                    'State' => $orderDetails->get_billing_state(),
+                    'Discount Percent' => 0,
+                    'Discount Amount' => '0.00',
+                    'Total Price' => $orderAmount,
+                    'Order Payment Details' => [
+                        [
+                            'payment_method_id' => $orderPaymentMethodId,
+                            'Payment_method_amount' => $orderAmount,
+                            'Remarks' => ''
+                        ]
+                    ],
+                    'Total Qty' => $totalQty,
+                    'Order Product Details' => $productItems
+                ]
+            ];
+
+            CurlRequest::placeOrder($orderArray);
         }
     }
 }
