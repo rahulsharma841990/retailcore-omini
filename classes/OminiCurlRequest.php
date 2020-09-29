@@ -128,6 +128,7 @@ if(!class_exists('OminiCurlRequest')) {
             }
             $productItems = [];
             $totalQty = 0;
+
             foreach($orderDetails->get_items() as $k => $item) {
                 $product = $item->get_data();
                 $productMeta = get_post_meta($product['product_id'], '_product_barcode');
@@ -170,11 +171,8 @@ if(!class_exists('OminiCurlRequest')) {
                     'Order Product Details' => $productItems
                 ]
             ];
-
             $response = CurlRequest::placeOrder($orderArray);
-            echo "<pre>";
-            print_r($response);
-            exit;
+            return true;
         }
     }
 }
