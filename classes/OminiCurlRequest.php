@@ -146,7 +146,7 @@ if(!class_exists('OminiCurlRequest')) {
 
             $orderArray = [
                 'Order Details' => [
-                    'Company ID' => 1,
+                    'Company ID' => 7,
                     'Order ID/PO NO' => $order_id,
                     'Date' => date('d'),
                     'Month' => date('m'),
