@@ -11,7 +11,7 @@
 * Plugin Name:       Retailcore - OMINI
 * Plugin URI:        https://www.aiinnovation.in/retailcore/
 * Description:       Retailcore plugins provides you the options sync your retailcore products into your woocommerce portal
-* Version:           1.0.0
+* Version:           1.0.2
 * Requires at least: 5.1
 * Requires PHP:      7.2
 * Author:            Rahul Sharma
