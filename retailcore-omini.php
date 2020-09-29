@@ -90,6 +90,7 @@ function retailcore_register_sidebar_menu_option() {
 add_action('woocommerce_thankyou', 'retailcore_place_order', 10, 1);
 
 function retailcore_place_order($order_id){
+    require_once( RETAILCORE__PLUGIN_DIR . 'classes/CurlRequest.php' );
     require_once( RETAILCORE__PLUGIN_DIR . 'classes/OminiCurlRequest.php' );
     OminiCurlRequest::placeOrder($order_id);
 }

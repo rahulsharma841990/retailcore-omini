@@ -112,12 +112,16 @@ if(!class_exists('OminiCurlRequest')) {
         }
 
         public static function placeOrder($order_id){
+//            echo "<pre>";
+//            print_r($order_id);
+//            exit;
 //            $order_id = 2124;
             $orderDetails = wc_get_order($order_id);
             $userDetails = $orderDetails->get_customer_id();
             $userDetails = get_userdata($userDetails);
             $orderAmount = $orderDetails->get_total();
             $paymentMethod = $orderDetails->get_payment_method();
+
             $orderPaymentMethodId = 0;
             if($paymentMethod == 'cod'){
                 $orderPaymentMethodId = 10;
@@ -130,7 +134,7 @@ if(!class_exists('OminiCurlRequest')) {
                 $totalQty += $product['quantity'];
                 $productItems[] = [
                     'Barcode' => $productMeta[0],
-                    'MRP' => 0,
+                    'MRP' => 1,
                     'Selling Price' => $product['total'],
                     'Order Qty' => $product['quantity'],
                     'Discount Percent' => '',
@@ -157,7 +161,7 @@ if(!class_exists('OminiCurlRequest')) {
                     'Total Price' => $orderAmount,
                     'Order Payment Details' => [
                         [
-                            'payment_method_id' => $orderPaymentMethodId,
+                            'Payment_method_id' => $orderPaymentMethodId,
                             'Payment_method_amount' => $orderAmount,
                             'Remarks' => ''
                         ]
@@ -167,7 +171,10 @@ if(!class_exists('OminiCurlRequest')) {
                 ]
             ];
 
-            CurlRequest::placeOrder($orderArray);
+            $response = CurlRequest::placeOrder($orderArray);
+//            echo "<pre>";
+//            print_r($response);
+//            exit;
         }
     }
 }
