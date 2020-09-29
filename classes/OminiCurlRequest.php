@@ -172,9 +172,9 @@ if(!class_exists('OminiCurlRequest')) {
             ];
 
             $response = CurlRequest::placeOrder($orderArray);
-//            echo "<pre>";
-//            print_r($response);
-//            exit;
+            echo "<pre>";
+            print_r($response);
+            exit;
         }
     }
 }
