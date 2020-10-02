@@ -71,7 +71,20 @@ if(!class_exists('OminiCurlRequest')) {
                 }else{
                     $categoriesArray[] = $childTerm['term_id'];
                 }
-                $objProduct = new WC_Product();
+                $args = array(
+                    'post_type' => 'product',
+                    'post_status' => 'publish',
+                    'posts_per_page' => 1,
+                    'meta_key' => '_product_barcode',
+                    'meta_value' => $product['product_system_barcode']
+                );
+                $dbResult = new WP_Query($args);
+                $existingProduct = $dbResult->get_posts();
+                if(!empty($existingProduct)){
+                    $objProduct = new WC_Product($existingProduct[0]->ID);
+                }else{
+                    $objProduct = new WC_Product();
+                }
                 $objProduct->set_image_id($galleryImages[0]);
                 unset($galleryImages[0]);
                 $objProduct->set_name($product['product_name']);
