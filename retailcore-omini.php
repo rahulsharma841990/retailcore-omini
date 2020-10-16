@@ -90,9 +90,35 @@ function retailcore_register_sidebar_menu_option() {
 add_action('woocommerce_checkout_order_processed', 'retailcore_place_order', 10, 1);
 
 function retailcore_place_order($order_id){
-    require_once( RETAILCORE__PLUGIN_DIR . 'classes/CurlRequest.php' );
-    require_once( RETAILCORE__PLUGIN_DIR . 'classes/OminiCurlRequest.php' );
-    OminiCurlRequest::placeOrder($order_id);
+    $orderDetails = wc_get_order($order_id);
+    $paymentMethod = $orderDetails->get_payment_method();
+    if($paymentMethod == 'cod'){
+        echo "<pre>";
+        print_r('from cod');
+        exit;
+//        require_once( RETAILCORE__PLUGIN_DIR . 'classes/CurlRequest.php' );
+//        require_once( RETAILCORE__PLUGIN_DIR . 'classes/OminiCurlRequest.php' );
+//        OminiCurlRequest::placeOrder($order_id);
+    }
+}
+
+add_action( 'woocommerce_order_status_completed', 'retailcore_omini_woocommerce_payment_complete' );
+
+function retailcore_omini_woocommerce_payment_complete($order_id){
+    $orderDetails = wc_get_order($order_id);
+    echo "<pre>";
+    print_r($orderDetails);
+    exit;
+    $orderDetails = wc_get_order($order_id);
+    $paymentMethod = $orderDetails->get_payment_method();
+    if($paymentMethod != 'cod'){
+        echo "<pre>";
+        print_r('from payment process');
+        exit;
+    }
+//    require_once( RETAILCORE__PLUGIN_DIR . 'classes/CurlRequest.php' );
+//    require_once( RETAILCORE__PLUGIN_DIR . 'classes/OminiCurlRequest.php' );
+//    OminiCurlRequest::placeOrder($order_id);
 }
 
 /**
