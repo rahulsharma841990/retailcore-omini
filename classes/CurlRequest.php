@@ -3,7 +3,8 @@ if(!class_exists('OminiCurlRequest')) {
 
     class CurlRequest{
 
-        private static $baseUrl = 'https://aiinnovation.in/retailcore/website_software_api/';
+//        private static $baseUrl = 'https://aiinnovation.in/retailcore/website_software_api/';
+        private static $baseUrl = 'https://retailcore.biz/taazasabzi_test/website_software_api/';
 
         private static $APP_ID = '4495A05377C6A1C6690C46CE4FE721B8';
 
@@ -14,8 +15,18 @@ if(!class_exists('OminiCurlRequest')) {
         }
 
         public static function getProducts(){
+            $lastTimestamp = null;
+            if(get_option( '_retailcore_omini_timestamp' ) !== false){
+                $lastTimestamp = get_option('_retailcore_omini_timestamp');
+                update_option('_retailcore_omini_timestamp',get_date_from_gmt('now'));
+            }else{
+                $lastTimestamp = date('Y-m-d H:i:s');
+                add_option('_retailcore_omini_timestamp',get_date_from_gmt('now'));
+            }
             $params = [
-                'company_id' => 7
+                'company_id' => 1,
+                'timestamp' => $lastTimestamp
+//                'timestamp' => '2020-11-24 13:00:00'
             ];
             return self::request($params);
         }

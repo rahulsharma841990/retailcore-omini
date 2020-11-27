@@ -19,4 +19,19 @@
             <input type="submit" name="syncProducts" class="button button-primary syncProduct" value="Sync Your Product">
         </div>
     </div>
+    <div class="row mt-1">
+        <div class="col-md-12 text-center">
+            <h4>Cron/Webhook URL</h4>
+            <code class="cron-url mt-1">
+                <?php echo get_site_url();?>?product_sync=AwtWrlly3SEY4UW3jB82dRBEhNkv1xh6
+            </code>
+        </div>
+    </div>
+
+    <div class="row mt-1">
+        <div class="col-md-12 text-center">
+            <h4>Last Sync On:</h4>
+            <p><?php echo get_option( '_retailcore_omini_timestamp' ); ?></p>
+        </div>
+    </div>
 </div>

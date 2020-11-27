@@ -22,3 +22,21 @@
 .wait-text{
     display: none;
 }
+
+.cron-url{
+    padding: 10px;
+}
+
+.page-title-action{
+    top: 1px !important;
+}
+
+.log-spin{
+    float: left !important;
+}
+
+.delete-log-order{
+    border: 1px solid #ff0000 !important;
+    color: #ff0000 !important;
+    background: #fffcfc !important;
+}
